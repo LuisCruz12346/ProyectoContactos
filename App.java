@@ -62,6 +62,14 @@ public class App {
 			
 		}
 		
+		try(BrowserContext s2 = browser.newContext()){
+			Page p4 = s2.newPage();
+			p4.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
+			p4.getByRole(AriaRole.COMBOBOX).nth(0).selectOption("3");
+			p4.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example6.png")));	
+			
+		}
+		
 	    System.out.println("Llegue");
         }catch (Exception e){
         	System.out.println(e);
