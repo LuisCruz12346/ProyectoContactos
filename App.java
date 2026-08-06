@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.LoadState;
 
+
 public class App {
     public static void main(String[] args) {
         try (Playwright playwright = Playwright.create()) {
@@ -50,6 +51,15 @@ public class App {
 				
 				download.saveAs(Paths.get("aviso.pdf"));
 			}
+		}
+		
+		try(BrowserContext s2 = browser.newContext()){
+			Page p3 = s2.newPage();
+			p3.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
+			p3.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("correo")
+				).fill("holaaaa");
+			p3.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example5.png")));	
+			
 		}
 		
 	    System.out.println("Llegue");
