@@ -6,7 +6,6 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.LoadState;
 
-
 public class App {
     public static void main(String[] args) {
         try (Playwright playwright = Playwright.create()) {
@@ -76,6 +75,7 @@ public class App {
 		try(BrowserContext s2 = browser.newContext()){
 			Page p5 = s2.newPage();
 			p5.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
+			p5.waitForTimeout(3000);
 			p5.locator("#input-file")
     				.setInputFiles(Paths.get("ejemplo.txt"));
     			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example7.png")));
@@ -120,20 +120,41 @@ public class App {
 			System.out.println(request.headers());
 			System.out.println(request.postData());
 			
-			int tokenLocalizacion = p5.locator("strong").count();
-			System.out.println("soy los estrong: " + tokenLocalizacion);
+			
+			Locator tokenLocalizacion = p5.locator(".styled > strong:nth-child(6)");
+			tokenLocalizacion.click();
 			String token = "";
-			//if(){
-			//	token = tokenLocalizacion.textContent();
-			//}
+			
+			token = tokenLocalizacion.textContent();
+			
 			System.out.println("Soy el token: " + token);
 			
 			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example9.png")));
+			
+			p5.navigate("https://www.banxico.org.mx/cep-scl/inicio2.do");
+			
+			p5.locator("div.entrada:nth-child(1) > input:nth-child(2)").fill("luis.c.hdz404@gmail.com");
+			p5.locator("div.entrada:nth-child(2) > input:nth-child(2)").fill(token);
+			
+			p5.locator(".footer > input:nth-child(1)").click();
+			
+			
+			
+			p5.waitForLoadState(LoadState.LOAD);
+			p5.locator(".footer").click();
+			
+			
+			// Revisar las cabeceras de la peticion o cerrar y volver hacerlo con otro contexto
+			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example10.png")));
+			
+			
 		}
 		
 	    System.out.println("Llegue");
         }catch (Exception e){
         	System.out.println(e);
+        	
+        	// Regresa el "", ya que me dio la pagina de error. 
         }
         
     }
