@@ -10,7 +10,9 @@ import com.microsoft.playwright.options.LoadState;
 public class App {
     public static void main(String[] args) {
         try (Playwright playwright = Playwright.create()) {
-		Browser browser = playwright.chromium().launch();
+        	
+		Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+		/*
 		BrowserContext s = browser.newContext();
 		Page page = s.newPage();
 		page.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
@@ -68,6 +70,65 @@ public class App {
 			p4.getByRole(AriaRole.COMBOBOX).nth(0).selectOption("3");
 			p4.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example6.png")));	
 			
+		}
+		*/
+		
+		try(BrowserContext s2 = browser.newContext()){
+			Page p5 = s2.newPage();
+			p5.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
+			p5.locator("#input-file")
+    				.setInputFiles(Paths.get("ejemplo.txt"));
+    			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example7.png")));
+    			p5.locator("div.entrada:nth-child(2) > input:nth-child(2)")
+    				.fill("luis.c.hdz404@gmail.com");
+    			p5.getByRole(AriaRole.COMBOBOX).nth(0).selectOption("3");
+    			
+    			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example8.png")));
+    			
+    			System.out.println("Valor se: "+ p5.locator("div.entrada:nth-child(3) > select:nth-child(2)").inputValue());
+    			
+    			System.out.println("Valor co: " + p5.locator("div.entrada:nth-child(2) > input:nth-child(2)").inputValue());
+    			System.out.println("Archivo: " + p5.locator("#boton_file").inputValue());
+    			
+    			System.out.println("Cookies " + s2.cookies());
+    			p5.onRequest(request -> {
+			    if ("POST".equals(request.method())) {
+				System.out.println(request.url());
+			    }
+			});
+    			
+    			
+    			
+    			Response response = p5.waitForResponse(
+			    r -> r.request().method().equals("POST")
+				 && r.url().contains("/upload"),
+			    () -> {
+				p5.locator("#btn_grupo-footer").click();
+			    }
+			);
+			System.out.println("Response");
+			System.out.println(response.headers().get("content-type"));
+			System.out.println(response.status());
+			System.out.println(response.url());
+			
+			
+			System.out.println("Request");
+			Request request = response.request();
+			
+			System.out.println(request.method());
+			System.out.println(request.url());
+			System.out.println(request.headers());
+			System.out.println(request.postData());
+			
+			int tokenLocalizacion = p5.locator("strong").count();
+			System.out.println("soy los estrong: " + tokenLocalizacion);
+			String token = "";
+			//if(){
+			//	token = tokenLocalizacion.textContent();
+			//}
+			System.out.println("Soy el token: " + token);
+			
+			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example9.png")));
 		}
 		
 	    System.out.println("Llegue");
