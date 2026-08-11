@@ -5,8 +5,32 @@ import java.nio.file.Paths;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.LoadState;
+import java.util.Random;
+import com.microsoft.playwright.options.BoundingBox;
 
 public class App {
+
+	public static void movimientoAleatorio(Page page, double  x , double  y){  
+		Random random = new Random();
+		int x_elemento = (int)x ;
+		int y_elemento = (int)y ;   
+		int x1 = 0, y1 = 0;        
+			while (x1 < x_elemento || y1 < y_elemento) { 
+			    if (x1 < x_elemento) {
+				int step = random.nextInt(10) + 1;         
+				x1 = Math.min(x1 + step, x_elemento);                
+			    }
+			    if (y1 < y_elemento) {
+				int step = random.nextInt(10) + 1;
+				y1 = Math.min(y1 + step, y_elemento);
+			    }
+
+			    page.mouse().move(x1, y1, new Mouse.MoveOptions().setSteps(2));
+			    page.waitForTimeout(20 + random.nextInt(30)); 
+			}
+			
+	}
+	
     public static void main(String[] args) {
         try (Playwright playwright = Playwright.create()) {
         	
@@ -72,19 +96,26 @@ public class App {
 		}
 		*/
 		
+		
 		try(BrowserContext s2 = browser.newContext()){
+			Random random = new Random();
 			Page p5 = s2.newPage();
 			p5.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
-			p5.waitForTimeout(3000);
+			p5.waitForTimeout(3000 + random.nextInt(1000));
 			p5.locator("#input-file")
     				.setInputFiles(Paths.get("ejemplo.txt"));
-    			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example7.png")));
+    			p5.waitForTimeout(1000 + random.nextInt(500));
+    			//p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example7.png")));
     			p5.locator("div.entrada:nth-child(2) > input:nth-child(2)")
-    				.fill("luis.c.hdz404@gmail.com");
-    			p5.getByRole(AriaRole.COMBOBOX).nth(0).selectOption("3");
+    				.pressSequentially("luis.hdz404@gmail.com", 
+				        new Locator.PressSequentiallyOptions().setDelay(100));
+    			p5.waitForTimeout(1100 + random.nextInt(500));
+    			p5.getByRole(AriaRole.COMBOBOX).nth(0).selectOption("2");
     			
-    			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example8.png")));
+    			p5.waitForTimeout(1200 + random.nextInt(500));
+    			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example15.png")));
     			
+    			/*
     			System.out.println("Valor se: "+ p5.locator("div.entrada:nth-child(3) > select:nth-child(2)").inputValue());
     			
     			System.out.println("Valor co: " + p5.locator("div.entrada:nth-child(2) > input:nth-child(2)").inputValue());
@@ -96,16 +127,24 @@ public class App {
 				System.out.println(request.url());
 			    }
 			});
+    			*/
     			
-    			
+    			Locator cargarArchivo = p5.locator("#btn_grupo-footer"); 
+    			BoundingBox box = cargarArchivo.boundingBox();
+    			movimientoAleatorio(p5,box.x,box.y);
     			
     			Response response = p5.waitForResponse(
 			    r -> r.request().method().equals("POST")
 				 && r.url().contains("/upload"),
 			    () -> {
-				p5.locator("#btn_grupo-footer").click();
+				cargarArchivo.click();
 			    }
 			);
+			
+			p5.waitForTimeout(1500 + random.nextInt(500));
+			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example16.png")));
+			
+			/*
 			System.out.println("Response");
 			System.out.println(response.headers().get("content-type"));
 			System.out.println(response.status());
@@ -119,8 +158,9 @@ public class App {
 			System.out.println(request.url());
 			System.out.println(request.headers());
 			System.out.println(request.postData());
+			*/
 			
-			
+			/*
 			Locator tokenLocalizacion = p5.locator(".styled > strong:nth-child(6)");
 			tokenLocalizacion.click();
 			String token = "";
@@ -146,9 +186,29 @@ public class App {
 			
 			// Revisar las cabeceras de la peticion o cerrar y volver hacerlo con otro contexto
 			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example10.png")));
-			
+			*/
 			
 		}
+		
+		
+		/*
+		try(BrowserContext s2 = browser.newContext()){
+			Random random = new Random();
+			
+			Page p5 = s2.newPage();
+			p5.navigate("https://www.banxico.org.mx/cep-scl/inicio.do");
+			p5.waitForTimeout(3000 + random.nextInt(1000));
+			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example11.png")));
+			
+			Locator boton = p5.locator(".principal > p:nth-child(4) > a:nth-child(1)");
+			BoundingBox box = boton.boundingBox();
+			
+			movimientoAleatorio(p5, box.x , box.y);
+			
+			p5.waitForTimeout(3000 + random.nextInt(1000));
+			p5.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example12.png")));
+		}
+		*/
 		
 	    System.out.println("Llegue");
         }catch (Exception e){
