@@ -74,4 +74,43 @@ class Test1 extends CasosDeUso {
   
 }
 
+import org.apache.poi.xwpf.usermodel.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+public class CrearWord {
+    public static void main(String[] args) throws IOException {
+        XWPFDocument documento = new XWPFDocument();
+
+        // Título
+        XWPFParagraph titulo = documento.createParagraph();
+        titulo.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun runTitulo = titulo.createRun();
+        runTitulo.setText("Informe de Ejemplo");
+        runTitulo.setBold(true);
+        runTitulo.setFontSize(18);
+
+        // Párrafo normal
+        XWPFParagraph parrafo = documento.createParagraph();
+        XWPFRun run = parrafo.createRun();
+        run.setText("Este es un párrafo generado con Apache POI.");
+        run.setFontFamily("Calibri");
+        run.setFontSize(12);
+
+        // Guardar archivo
+        try (FileOutputStream out = new FileOutputStream("documento.docx")) {
+            documento.write(out);
+        }
+        documento.close();
+        System.out.println("Documento creado correctamente");
+    }
+}
+
+import java.io.FileInputStream;
+
+XWPFParagraph pImg = documento.createParagraph();
+XWPFRun runImg = pImg.createRun();
+try (FileInputStream img = new FileInputStream("logo.png")) {
+    runImg.addPicture(img, XWPFDocument.PICTURE_TYPE_PNG, "logo.png", 
+        Units.toEMU(150), Units.toEMU(150)); // ancho, alto en puntos
+}
