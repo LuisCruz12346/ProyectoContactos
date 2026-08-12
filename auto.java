@@ -114,3 +114,19 @@ try (FileInputStream img = new FileInputStream("logo.png")) {
     runImg.addPicture(img, XWPFDocument.PICTURE_TYPE_PNG, "logo.png", 
         Units.toEMU(150), Units.toEMU(150)); // ancho, alto en puntos
 }
+
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Comparator;
+
+File carpeta = new File("C:/imagenes");
+String prefijo = "caso13";
+
+File[] archivos = carpeta.listFiles((dir, nombre) -> 
+    nombre.toLowerCase().startsWith(prefijo.toLowerCase())
+);
+
+
+Arrays.sort(archivos, Comparator.comparing(File::getName));
