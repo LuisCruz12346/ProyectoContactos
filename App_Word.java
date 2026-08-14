@@ -18,21 +18,31 @@ public class App {
         try (InputStream is = new ByteArrayInputStream(plantillaBytes);
             XWPFDocument document = new XWPFDocument(is)) {
 
+            /*
+            XWPFParagraph saltoPagina = document.createParagraph();
+            XWPFRun runSalto = saltoPagina.createRun();
+            runSalto.addBreak(BreakType.PAGE);
+            */
             
+            XWPFParagraph titulo = document.createParagraph();
+            titulo.setStyle("CasoNombre"); 
+            XWPFRun runTitulo = titulo.createRun();
+            runTitulo.setText(nombreCaso);
+
+            XWPFParagraph cuerpo = document.createParagraph();
+            cuerpo.setStyle("EstiloParrafo"); 
+            XWPFRun runCuerpo = cuerpo.createRun();
+            runCuerpo.setText(contenido);
+
             XWPFParagraph saltoPagina = document.createParagraph();
             XWPFRun runSalto = saltoPagina.createRun();
             runSalto.addBreak(BreakType.PAGE);
 
+            XWPFParagraph cuerpo2 = document.createParagraph();
+            cuerpo2.setStyle("EstiloParrafo"); 
+            XWPFRun runCuerpo2 = cuerpo2.createRun();
+            runCuerpo2.setText(contenido);
             
-            XWPFParagraph titulo = document.createParagraph();
-            titulo.setStyle("EstiloParrafo"); 
-            XWPFRun runTitulo = titulo.createRun();
-            runTitulo.setText("Caso: " + nombreCaso);
-            runTitulo.setBold(true);
-
-            XWPFParagraph cuerpo = document.createParagraph();
-            XWPFRun runCuerpo = cuerpo.createRun();
-            runCuerpo.setText(contenido);
 
             // 3. Guardar como archivo independiente para este caso
             try (OutputStream out = new FileOutputStream("caso_" + nombreCaso + ".docx")) {
